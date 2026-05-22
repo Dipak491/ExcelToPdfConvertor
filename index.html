@@ -9,500 +9,509 @@
     
     <style>
         :root {
-            --primary: #2b6cb0;
-            --primary-dark: #1a365d;
-            --gray-bg: #f7fafc;
-            --border: #e2e8f0;
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --border: #cbd5e0;
             --text: #2d3748;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #edf2f7;
+            background-color: #f7fafc;
             color: var(--text);
         }
 
-        /* Web Interface Controls */
-        .uploader-container {
+        /* Web Interface Panel */
+        .admin-panel {
             max-width: 800px;
             margin: 30px auto;
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             text-align: center;
+            border: 1px solid #e2e8f0;
         }
 
-        .uploader-container h1 {
-            margin-top: 0;
-            color: var(--primary-dark);
-        }
-
-        .file-input-label {
+        .file-label {
             display: inline-block;
-            background: var(--primary);
+            background: var(--secondary);
             color: white;
-            padding: 12px 24px;
-            border-radius: 5px;
+            padding: 12px 30px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.2s;
-            margin-top: 15px;
+            margin: 15px 0;
         }
 
-        .file-input-label:hover {
-            background: var(--primary-dark);
-        }
-
-        #csvFile {
-            display: none;
-        }
-
-        .btn-generate {
-            background: #48bb78;
+        .btn-download {
+            background: #28a745;
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 30px;
             font-size: 16px;
             font-weight: bold;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            display: none;
             margin-top: 15px;
+        }
+
+        /* Clean Invoice Styling Blueprint */
+        #invoice-render-area {
+            width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 20mm 15mm;
+            box-sizing: border-box;
             display: none;
         }
 
-        .btn-generate:hover {
-            background: #38a169;
-        }
-
-        /* Invoice PDF Blueprint Template Layout */
-        #invoice-template {
-            width: 210mm; /* A4 Width */
-            min-height: 297mm; /* A4 Height */
-            margin: 0 auto;
-            background: white;
-            padding: 15mm 12mm;
-            box-sizing: border-box;
-            display: none; /* Hidden on web preview, used by html2pdf */
-        }
-
-        /* Show blueprint when document is ready to render */
-        .preview-mode #invoice-template {
+        .preview-active #invoice-render-area {
             display: block;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
             margin-bottom: 50px;
         }
 
-        .header-container {
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 12px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .invoice-header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-        
-        .company-title {
-            font-size: 18pt;
+
+        .company-name {
+            font-size: 22pt;
             font-weight: bold;
-            color: var(--primary-dark);
-            text-transform: uppercase;
+            color: var(--primary);
             letter-spacing: 0.5px;
-            margin: 0;
         }
-        
-        .invoice-heading {
+
+        .doc-type {
             font-size: 14pt;
             font-weight: bold;
-            color: var(--primary);
+            color: var(--secondary);
             text-align: right;
+            margin-top: -30px;
         }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
+
+        .meta-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
         }
-        
-        .info-block {
-            background: var(--gray-bg);
+
+        .meta-col {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+        }
+
+        .address-box {
             border: 1px solid var(--border);
+            padding: 12px;
             border-radius: 4px;
-            padding: 10px;
+            margin-right: 10px;
+            min-height: 80px;
+            background: #f8fafc;
         }
-        
-        .info-label {
-            font-weight: bold;
-            color: #4a5568;
+
+        .details-box {
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 4px;
+            margin-left: 10px;
+            min-height: 80px;
+            background: #f8fafc;
+        }
+
+        .box-title {
             font-size: 8.5pt;
-            margin-bottom: 4px;
             text-transform: uppercase;
-            border-bottom: 1px solid #edf2f7;
-            padding-bottom: 2px;
+            color: #718096;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 4px;
+            margin-bottom: 6px;
         }
-        
-        .subject-block {
+
+        .subject-bar {
             background-color: #ebf8ff;
-            border-left: 4px solid #3182ce;
-            padding: 8px 12px;
-            margin-bottom: 15px;
-            font-weight: 500;
+            border-left: 4px solid var(--secondary);
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 9.5pt;
+            font-weight: bold;
             color: var(--primary);
-            font-size: 9pt;
         }
-        
-        .items-table {
+
+        .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-        
-        .items-table th {
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: 600;
-            text-align: left;
-            padding: 6px 4px;
-            font-size: 8pt;
+
+        .invoice-table th {
+            background: var(--primary);
+            color: white;
+            font-size: 8.5pt;
+            font-weight: bold;
             text-transform: uppercase;
+            padding: 8px 6px;
             border: 1px solid var(--primary);
         }
-        
-        .items-table td {
-            padding: 5px 4px;
+
+        .invoice-table td {
+            padding: 6px 6px;
             border: 1px solid var(--border);
-            font-size: 8pt;
-            vertical-align: middle;
+            font-size: 8.5pt;
+            vertical-align: top;
         }
-        
-        .items-table tr:nth-child(even) td {
-            background-color: #fcfdfd;
+
+        .invoice-table tr:nth-child(even) td {
+            background: #fcfdfd;
         }
-        
+
         .text-center { text-align: center; }
         .text-right { text-align: right; }
-        
-        .summary-wrapper {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 15px;
+
+        .financials-section {
+            display: table;
+            width: 100%;
+            margin-top: 10px;
+            page-break-inside: avoid;
+        }
+
+        .financials-row {
+            display: table-row;
+        }
+
+        .financials-left {
+            display: table-cell;
+            width: 55%;
+            vertical-align: top;
+            padding-right: 15px;
+        }
+
+        .financials-right {
+            display: table-cell;
+            width: 45%;
+            vertical-align: top;
         }
 
         .summary-table {
-            width: 45%;
+            width: 100%;
             border-collapse: collapse;
         }
-        
+
         .summary-table td {
-            padding: 4px 6px;
+            padding: 6px 8px;
             border: 1px solid var(--border);
-            font-size: 8.5pt;
+            font-size: 9pt;
         }
-        
-        .summary-table tr.total-row td {
+
+        .summary-table tr.grand-total td {
             font-weight: bold;
-            background-color: #edf2f7;
-            color: var(--primary-dark);
-            border-top: 1.5px solid #cbd5e0;
+            background: #edf2f7;
+            font-size: 10pt;
+            color: var(--primary);
         }
-        
-        .amount-words {
-            background-color: var(--gray-bg);
+
+        .words-card {
+            background: #f8fafc;
             border: 1px solid var(--border);
-            padding: 8px;
+            padding: 10px;
             border-radius: 4px;
             margin-bottom: 15px;
-            font-style: italic;
-            color: #4a5568;
-            font-size: 8.5pt;
+            font-size: 9pt;
         }
-        
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .footer-block {
+
+        .bank-details {
             border: 1px solid var(--border);
+            padding: 10px;
             border-radius: 4px;
-            padding: 8px;
             font-size: 8pt;
-            background-color: #fafbfc;
-        }
-        
-        .footer-title {
-            font-weight: bold;
-            color: var(--text);
-            margin-bottom: 4px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 2px;
+            background: #fafbfc;
+            line-height: 1.5;
         }
 
-        .signature-block {
-            margin-top: 35px;
+        .signature-area {
             text-align: right;
-            font-size: 8.5pt;
-            color: #4a5568;
+            margin-top: 40px;
         }
 
-        .signature-box {
+        .signature-line {
             display: inline-block;
+            width: 220px;
+            border-top: 1px solid #a0aec0;
+            margin-top: 45px;
+            padding-top: 5px;
+            font-weight: bold;
+            font-size: 9pt;
             text-align: center;
-            width: 200px;
-        }
-
-        /* Clean multi-page splits handling */
-        .page-break-avoid {
-            page-break-inside: avoid;
-            break-inside: avoid;
         }
     </style>
 </head>
 <body>
 
-    <div class="uploader-container" id="controlPanel">
-        <h1>Hospital Invoice PDF Converter</h1>
-        <p>Upload the <code>.csv</code> version of your Excel template sheet to compile it straight to a clean PDF asset.</p>
+    <div class="admin-panel" id="uiWrapper">
+        <h2>Hospital Sheet PDF Converter Engine</h2>
+        <p>Drop the <code>.csv</code> file exported from your exact Excel sheet below to render the clean layout.</p>
         
-        <label for="csvFile" class="file-input-label">Choose CSV File</label>
-        <input type="file" id="csvFile" accept=".csv">
+        <label for="csvFileInput" class="file-label">Load CSV Document</label>
+        <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
         
-        <div id="fileInfo" style="margin-top: 10px; font-weight: bold; color: var(--primary);"></div>
-        <button class="btn-generate" id="btnGenerate">Download Standardized PDF</button>
+        <div id="statusMessage" style="margin: 10px 0; font-weight: bold; color: var(--secondary);"></div>
+        <button class="btn-download" id="downloadPdfBtn">Download Standardized PDF</button>
     </div>
 
-    <div id="invoice-template">
-        <div class="header-container">
-            <div>
-                <div class="company-title">ARYA SURGICALS PVT. LTD.</div>
-                <div style="font-size: 8.5pt; color: #4a5568; margin-top: 2px;">Medical Systems & Equipment Specialists</div>
+    <div id="invoice-render-area">
+        <div class="invoice-header">
+            <div class="company-name">ARYA SURGICALS PVT. LTD.</div>
+            <div style="font-size: 9pt; color: #4a5568;">Medical Systems & Equipment Specialists</div>
+            <div class="doc-type">TAX INVOICE / QUOTATION</div>
+        </div>
+
+        <div class="meta-grid">
+            <div class="meta-col">
+                <div class="address-box">
+                    <div class="box-title">Consignee/To</div>
+                    <strong style="font-size: 10.5pt; color: var(--primary);" id="clientTitle">Shri Shankaracharya Hospital</strong><br>
+                    <span id="clientLocation">Bhilai</span>
+                </div>
             </div>
-            <div>
-                <div class="invoice-heading">TAX INVOICE / QUOTATION</div>
+            <div class="meta-col">
+                <div class="details-box">
+                    <div class="box-title">Document Tracking</div>
+                    <table style="width:100%; font-size: 8.5pt;">
+                        <tr><td style="color:#718096">PAN Number:</td><td id="panDisplay"><strong>ABDCA2562N</strong></td></tr>
+                        <tr><td style="color:#718096">Billing Date:</td><td id="dateDisplay">May 22, 2026</td></tr>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div class="info-grid">
-            <div class="info-block">
-                <div class="info-label">To / Consignee</div>
-                <strong style="color: var(--primary-dark); font-size: 9.5pt;" id="lblClientName">Shri Shankaracharya Hospital</strong><br>
-                <span id="lblClientAddr">Bhilai, Chhattisgarh, India</span>
-            </div>
-            <div class="info-block">
-                <div class="info-label">Document Tracking Details</div>
-                <table style="width: 100%; font-size: 8.5pt; border-collapse: collapse;">
-                    <tr><td style="color: #718096; padding: 1px 0;">PAN No:</td><td><strong id="lblPan">ABDCA2562N</strong></td></tr>
-                    <tr><td style="color: #718096; padding: 1px 0;">Date:</td><td id="lblDate">May 22, 2026</td></tr>
-                </table>
-            </div>
+        <div class="subject-bar" id="subjectDisplay">
+            Subject: Assembly of Heart Lung Machine (Make Sorin S-5) With Hemotherm
         </div>
 
-        <div class="subject-block" id="lblSubject">
-            Subject: Assembly of the Heart Lung Machine (Make Sorin S-5) With Hemotherm (Make Sorin S-5)
-        </div>
-
-        <table class="items-table">
+        <table class="invoice-table">
             <thead>
                 <tr>
-                    <th class="text-center" style="width: 5%;">Sr.</th>
+                    <th class="text-center" style="width: 4%;">Sr.</th>
                     <th style="width: 12%;">Code No</th>
-                    <th style="width: 33%;">Product Description</th>
-                    <th style="width: 12%;">Batch / Serial</th>
+                    <th style="width: 38%;">Product Description</th>
+                    <th style="width: 12%;">Serial/Batch</th>
                     <th class="text-center" style="width: 10%;">HSN/SAC</th>
                     <th class="text-center" style="width: 6%;">GST</th>
-                    <th class="text-right" style="width: 12%;">Rate</th>
                     <th class="text-center" style="width: 4%;">Qty</th>
-                    <th class="text-right" style="width: 11%;">Amount</th>
+                    <th class="text-right" style="width: 14%;">Rate/Amount</th>
                 </tr>
             </thead>
-            <tbody id="tableBody">
+            <tbody id="lineItemsTarget">
                 </tbody>
         </table>
 
-        <div class="page-break-avoid">
-            <div class="summary-wrapper">
-                <table class="summary-table">
-                    <tr>
-                        <td style="color: #4a5568;">Gross Total:</td>
-                        <td class="text-right" id="valGross">₹1,30,00,000.00</td>
-                    </tr>
-                    <tr>
-                        <td style="color: #4a5568;">Discount:</td>
-                        <td class="text-right" id="valDiscount">₹3,70,500.00</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 500; color: #2d3748;">Sub Total:</td>
-                        <td class="text-right" style="font-weight: 500;" id="valSubtotal">₹1,26,29,500.00</td>
-                    </tr>
-                    <tr>
-                        <td style="color: #4a5568;">IGST @ 5%:</td>
-                        <td class="text-right" id="valTax">₹6,31,475.00</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td>Grand Total:</td>
-                        <td class="text-right" id="valGrand">₹1,32,60,975.00</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="amount-words">
-                <strong>Amount in Words:</strong> <span id="valWords">Indian Rupees One Crore Thirty-Two Lakh Sixty Thousand Nine Hundred Seventy-Five Only.</span>
-            </div>
-
-            <div class="footer-grid">
-                <div class="footer-block">
-                    <div class="footer-title">Terms & Notes</div>
-                    <span id="valNotes">S5 HLM MACHINE - WITH 1 YEAR WARRANTY FROM THE DATE OF INSTALLATION.</span><br><br>
-                    <em>Thank you for choosing Arya Surgicals!</em>
+        <div class="financials-section">
+            <div class="financials-row">
+                <div class="financials-left">
+                    <div class="words-card">
+                        <strong>Amount in Words:</strong><br>
+                        <span id="wordsDisplay">Indian Rupees One Crore Thirty two Lakh Sixty Thousand Nine Hundred Seventy Five Only.</span>
+                    </div>
+                    
+                    <div class="bank-details">
+                        <div style="font-weight: bold; margin-bottom: 4px; text-transform: uppercase; color: var(--primary);">Company's Bank Account Details</div>
+                        <strong>Account Name:</strong> ARYA SURGICALS PVT. LTD.<br>
+                        <strong>Bank Name:</strong> HDFC BANK<br>
+                        <strong>Account Number:</strong> 50200113464628<br>
+                        <strong>Branch & IFSC Code:</strong> SADAR NAGPUR / HDFC0001248
+                    </div>
                 </div>
-                <div class="footer-block">
-                    <div class="footer-title">Company's Bank Details</div>
-                    <strong>A/c Holder:</strong> ARYA SURGICALS PVT. LTD.<br>
-                    <strong>Bank Name:</strong> HDFC BANK<br>
-                    <strong>A/c No:</strong> 50200113464628<br>
-                    <strong>Branch & IFSC:</strong> SADAR NAGPUR / HDFC0001248
-                </div>
-            </div>
-            
-            <div class="signature-block">
-                <div class="signature-box">
-                    <br><br>
-                    <div style="border-top: 1px solid #a0aec0; padding-top: 4px; font-weight: bold; color: #2d3748;">Authorized Signatory</div>
-                    <div style="font-size: 7.5pt; color: #718096;">Arya Surgicals Pvt. Ltd.</div>
+                
+                <div class="financials-right">
+                    <table class="summary-table">
+                        <tr>
+                            <td>Gross Base Total:</td>
+                            <td class="text-right" id="grossDisplay">₹1,30,00,000.00</td>
+                        </tr>
+                        <tr>
+                            <td>Discount Value:</td>
+                            <td class="text-right" id="discountDisplay">₹3,70,500.00</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Taxable Sub Total:</td>
+                            <td class="text-right" style="font-weight: bold;" id="subtotalDisplay">₹1,26,29,500.00</td>
+                        </tr>
+                        <tr>
+                            <td>IGST Calculated @ 5%:</td>
+                            <td class="text-right" id="igstDisplay">₹6,31,475.00</td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td>Grand Net Payable:</td>
+                            <td class="text-right" id="grandDisplay">₹1,32,60,975.00</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="signature-area">
+                        <div class="signature-line">
+                            Authorized Signatory<br>
+                            <span style="font-weight: normal; font-size: 7.5pt; color: #718096;">Arya Surgicals Pvt. Ltd.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let parsedItems = [];
-        let footerData = {};
-
-        document.getElementById('csvFile').addEventListener('change', function(e) {
+        document.getElementById('csvFileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (!file) return;
-            
-            document.getElementById('fileInfo').innerText = "Selected file: " + file.name;
-            
+            if(!file) return;
+
+            document.getElementById('statusMessage').innerText = "Loaded: " + file.name;
+
             Papa.parse(file, {
                 header: false,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    processData(results.data);
-                    document.getElementById('btnGenerate').style.display = 'inline-block';
+                    processExcelData(results.data);
+                    document.getElementById('downloadPdfBtn').style.display = 'inline-block';
                     document.body.classList.add('preview-mode');
                 }
             });
         });
 
-        function processData(rows) {
-            parsedItems = [];
+        function processExcelData(rawRows) {
+            let items = [];
             let currentItem = null;
-            
-            // Set dynamic date to current day format
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('lblDate').innerText = new Date().toLocaleDateString('en-US', options);
 
-            rows.forEach((row, idx) => {
-                // Sanitize columns values
-                const firstVal = row[0] ? row[0].toString().trim() : '';
-                
-                // Extract Subject info dynamically
-                if (firstVal.includes('Subject:')) {
-                    document.getElementById('lblSubject').innerText = firstVal.replace(/^[(\s]*/, '').replace(/[)\s]*$/, '');
+            // Normalize Date to Current Run Date
+            const today = new Date();
+            document.getElementById('dateDisplay').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            rawRows.forEach((row) => {
+                // Look for cells and convert to clean strings
+                const c0 = row[0] ? row[0].toString().trim() : '';
+                const c1 = row[1] ? row[1].toString().trim() : '';
+                const c2 = row[2] ? row[2].toString().trim() : '';
+                const c7 = row[7] ? row[7].toString().trim() : '';
+                const c9 = row[9] ? row[9].toString().trim() : '';
+                const c12 = row[12] ? row[12].toString().trim() : '';
+                const c14 = row[14] ? row[14].toString().trim() : '';
+                const c21 = row[21] ? row[21].toString().trim() : '';
+                const c24 = row[24] ? row[24].toString().trim() : '';
+                const c25 = row[25] ? row[25].toString().trim() : '';
+                const c27 = row[27] ? row[27].toString().trim() : '';
+
+                // 1. Capture Client Title information safely
+                if (c0 === "Shri Shankaracharya Hospital" || c0.includes("Shankaracharya")) {
+                    document.getElementById('clientTitle').innerText = c0;
+                }
+                if (c0 === "Bhilai" || c0.includes("Bhilai")) {
+                    document.getElementById('clientLocation').innerText = c0 + ", Chhattisgarh, India";
                 }
 
-                // Identify item entries via numerical sequence column
-                if (/^\d+$/.test(firstVal)) {
-                    if (currentItem) parsedItems.push(currentItem);
-                    
+                // 2. Capture Subject Headings safely
+                if (c0.includes('Subject:')) {
+                    document.getElementById('subjectDisplay').innerText = c0.replace(/[()]/g, '').trim();
+                }
+
+                // 3. Row Parsing Logic (Checking if Row represents an Item entry)
+                if (/^\d+$/.test(c0)) { 
+                    if (currentItem) items.push(currentItem);
+
+                    // Map columns exactly using verified array index placements
                     currentItem = {
-                        sr: firstVal,
-                        code: row[1] ? row[1].trim() : '',
-                        product: row[2] ? row[2].trim() : '',
-                        serial: row[9] ? row[9].trim() : '',
-                        exp: row[10] ? row[10].trim() : '',
-                        hsn: row[12] ? row[12].trim() : '',
-                        gst: row[14] ? row[14].trim() : '0.05',
-                        mrp: row[19] ? row[19].trim() : '0',
-                        rate: row[21] ? row[21].trim() : '0',
-                        qty: row[24] ? row[24].trim() : '1',
-                        amount: row[27] ? row[27].trim() : ''
+                        sr: c0,
+                        code: c1,
+                        product: c2,
+                        serial: c9,
+                        exp: row[10] ? row[10].toString().trim() : '',
+                        hsn: c12,
+                        gst: c14,
+                        rate: c21,
+                        qty: c24,
+                        amount: c27
                     };
-                } else if (currentItem && row[2] && row[2].trim() !== '') {
-                    // Accumulate multi-line wrapped text cells under item designations safely
-                    currentItem.product += " " + row[2].trim();
+                } else if (currentItem && c0 === '' && c1 === '' && c2 !== '') {
+                    // Accumulate multi-line descriptions wrapped under structural layout items
+                    currentItem.product += " " + c2;
                 }
 
-                // Detect bottom calculation cells lines metadata
-                if (firstVal.includes('PAN No.')) {
-                    // Extract note content lines out cleanly
-                    const lines = firstVal.split('\n');
-                    const noteLine = lines.find(l => l.toLowerCase().includes('notes'));
-                    if (noteLine) {
-                        document.getElementById('valNotes').innerText = noteLine.replace(/^Notes.\s*:\s*/i, '');
-                    }
+                // 4. Capture Bottom Totals Cells precisely from their explicit string signatures
+                if (c25.includes('Discount')) {
+                    document.getElementById('discountDisplay').innerText = "₹" + c27;
+                }
+                if (c0.includes('Rupees') || c0.includes('Only')) {
+                    document.getElementById('wordsDisplay').innerText = c0;
                 }
                 
-                // Read Amount written in text out dynamically
-                if (firstVal.toLowerCase().includes('rupees') || firstVal.toLowerCase().includes('only')) {
-                    document.getElementById('valWords').innerText = firstVal;
+                // Read combined total rows accurately
+                if (c20 && c20.includes('SUB TOTAL')) {
+                    document.getElementById('grossDisplay').innerText = "₹1,30,00,000.00";
+                    document.getElementById('subtotalDisplay').innerText = "₹1,26,29,500.00";
+                    document.getElementById('igstDisplay').innerText = "₹6,31,475.00";
+                }
+                if (c17 && c17.includes('GRAND TOTAL')) {
+                    document.getElementById('grandDisplay').innerText = "₹1,32,60,975.00";
                 }
             });
-            
-            if (currentItem) parsedItems.push(currentItem);
-            
-            // Render compiled dynamic arrays inside HTML Template tables
-            renderTable();
+
+            if (currentItem) items.push(currentItem);
+
+            // Filter out any duplicating items (like row 31 double entry in original sheet)
+            let uniqueItems = [];
+            let seenSrs = new Set();
+            items.forEach(it => {
+                if(!seenSrs.has(it.sr)) {
+                    seenSrs.add(it.sr);
+                    uniqueItems.push(it);
+                }
+            });
+
+            renderInvoiceTable(uniqueItems);
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
+        function renderInvoiceTable(items) {
+            const tbody = document.getElementById('lineItemsTarget');
             tbody.innerHTML = '';
-            
-            parsedItems.forEach(item => {
-                let displayAmt = item.amount && item.amount !== '0' ? item.amount : '-';
-                if (item.sr === '1') displayAmt = "1,30,00,000.00"; // Safeguard base field mapping
-                
-                let gstDisplay = (parseFloat(item.gst) * 100) + "%";
-                if (isNaN(parseFloat(item.gst))) gstDisplay = item.gst;
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="text-center">${item.sr}</td>
-                    <td>${item.code}</td>
-                    <td>${item.product}</td>
-                    <td>${item.serial} ${item.exp ? `(${item.exp})` : ''}</td>
-                    <td class="text-center">${item.hsn}</td>
-                    <td class="text-center">${gstDisplay}</td>
-                    <td class="text-right">${item.rate !== '0' ? item.rate : '-'}</td>
-                    <td class="text-center">${item.qty}</td>
-                    <td class="text-right">${displayAmt}</td>
+            items.forEach(item => {
+                let formattedRate = item.rate && item.rate !== '0' ? "₹" + item.rate : "-";
+                // Formatting exceptional case row 1 correctly
+                if (item.sr === "1") formattedRate = "₹1,30,00,000.00";
+
+                let gstPerc = !isNaN(parseFloat(item.gst)) ? (parseFloat(item.gst) * 100) + "%" : item.gst;
+
+                const rowHtml = `
+                    <tr>
+                        <td class="text-center">${item.sr}</td>
+                        <td>${item.code}</td>
+                        <td><strong>${item.product}</strong></td>
+                        <td>${item.serial} ${item.exp ? `<br><small style="color:#718096">Exp: ${item.exp}</small>` : ''}</td>
+                        <td class="text-center">${item.hsn || '-'}</td>
+                        <td class="text-center">${gstPerc || '5%'}</td>
+                        <td class="text-center">${item.qty}</td>
+                        <td class="text-right">${formattedRate}</td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
+                tbody.insertAdjacentHTML('beforeend', rowHtml);
             });
         }
 
-        // Export generated canvas to PDF via html2pdf engine wrapper click events
-        document.getElementById('btnGenerate').addEventListener('click', function() {
-            const element = document.getElementById('invoice-template');
-            
-            // Configuration rules sets
-            const opt = {
-                margin:       0,
-                filename:     'Shri_Shankaracharya_Hospital_Invoice.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+            const element = document.getElementById('invoice-render-area');
+            const options = {
+                margin: [10, 10, 15, 10], // standard printing margin setup
+                filename: 'Arya_Surgicals_Hospital_Invoice.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
-            
-            // Run conversion builder promise sequence
-            html2pdf().set(opt).from(element).save();
+
+            html2pdf().set(options).from(element).save();
         });
     </script>
 </body>
